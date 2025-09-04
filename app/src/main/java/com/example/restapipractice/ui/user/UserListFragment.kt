@@ -22,7 +22,6 @@ fun UserListScreen(
     modifier: Modifier = Modifier,
 ) {
     val users = userViewModel.userList
-    println("users = $users")
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("User List") }) },
@@ -36,8 +35,18 @@ fun UserListScreen(
                         Column(
                             modifier = Modifier.padding(16.dp)
                         ) {
-                            Text(text = user.name)
-                            Text(text = user.email)
+//                            println(user)
+//                            Text(name ?: "no name")
+                            Text(user.name ?: "no name")
+                            Text(user.email ?: "no email")
+                            Text(user.phone ?: "no phone")
+                            Text(user.website ?: "no website")
+                            Text(user.address?.city ?: "no address")
+                            Text(user.company?.name ?: "no company")
+                            Text(user.company?.catchPhrase ?: "no catchPhrase")
+                            Text(user.company?.bs ?: "no bs")
+                            Text(user.address?.geo?.lat ?: "no lat")
+                            Text(user.address?.geo?.lng ?: "no lng")
                         }
                     }
                 }

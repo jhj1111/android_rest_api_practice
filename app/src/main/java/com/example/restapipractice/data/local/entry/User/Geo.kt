@@ -20,6 +20,6 @@ import androidx.room.PrimaryKey
 data class Geo(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val addressId: Int,
-    val lat: String,
-    val lng: String
+    val lat: String?,
+    val lng: String?,
 )

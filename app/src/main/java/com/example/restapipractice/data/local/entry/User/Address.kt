@@ -20,8 +20,8 @@ import androidx.room.PrimaryKey
 data class Address(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val userId: Int,
-    val street: String,
-    val suite: String,
-    val city: String,
-    val zipcode: String
+    val street: String?,
+    val suite: String?,
+    val city: String?,
+    val zipcode: String?,
 )

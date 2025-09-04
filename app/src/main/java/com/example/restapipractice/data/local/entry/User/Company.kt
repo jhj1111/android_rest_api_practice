@@ -19,8 +19,8 @@ import androidx.room.PrimaryKey
 )
 data class Company(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val userId: Int,
-    val name: String,
-    val catchPhrase: String,
-    val bs: String
+    val userId: Int?,
+    val name: String?,
+    val catchPhrase: String?,
+    val bs: String?,
 )

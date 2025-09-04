@@ -1,9 +1,5 @@
 package com.example.restapipractice.data.local.dao.user
 
-import androidx.room.Dao
-import androidx.room.Transaction
-import com.example.restapipractice.data.local.entry.User.UserWithDetails
-
 //@Dao
 //abstract class UserWithDetailsDao(
 //    private val userDao: UserDao,

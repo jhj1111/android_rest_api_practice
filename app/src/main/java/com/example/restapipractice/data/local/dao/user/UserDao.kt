@@ -1,16 +1,19 @@
 package com.example.restapipractice.data.local.dao.user
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.example.restapipractice.data.local.entry.User.Address
 import com.example.restapipractice.data.local.entry.User.AddressWithGeo
 import com.example.restapipractice.data.local.entry.User.Company
 import com.example.restapipractice.data.local.entry.User.Geo
 import com.example.restapipractice.data.local.entry.User.User
 import com.example.restapipractice.data.local.entry.User.UserWithDetails
+import com.example.restapipractice.data.local.entry.User.UserWithDetailsDTO
 
 @Dao
 interface UserDao {
@@ -18,16 +21,32 @@ interface UserDao {
 //    suspend fun insertUsersWithDetails(users: List<UserWithDetails>)
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun insertUser(user: User)
+    suspend fun insert(user: User): Long
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun insertAddress(address: Address)
+    suspend fun insert(address: Address): Long
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun insertGeo(geo: Geo)
+    suspend fun insert(geo: Geo): Long
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun insertCompany(company: Company)
+    suspend fun insert(company: Company): Long
+
+    @Update
+    suspend fun update(user: User)
+
+    @Update
+    suspend fun update(address: Address)
+
+    @Update
+    suspend fun update(geo: Geo)
+
+    @Update
+    suspend fun update(company: Company)
+
+    @Transaction
+    @Delete
+    suspend fun delete(user: User)
 
     @Transaction
     @Query("SELECT * FROM users WHERE id = :userId")
@@ -36,4 +55,46 @@ interface UserDao {
     @Transaction
     @Query("SELECT * FROM addresses WHERE id = :addressId")
     suspend fun getAddressWithGeo(addressId: Int): AddressWithGeo
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    suspend fun insert(userWithDetails: UserWithDetails): Long {
+        val userId = insert(userWithDetails.user)
+        val addressId = insert(userWithDetails.address!!)
+//        insert(userWithDetails.address.geo!!)
+        insert(userWithDetails.company!!)
+        return userId
+    }
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    suspend fun insert(users: List<UserWithDetails>) {
+        users.forEach {
+            insert(it)
+        }
+    }
+
+    @Transaction
+    @Update
+    suspend fun update(users: List<UserWithDetails>) {
+        users.forEach {
+            update(it)
+        }
+    }
+
+    @Transaction
+    @Update
+    suspend fun update(userWithDetails: UserWithDetails) {
+        update(userWithDetails.address!!)
+        update(userWithDetails.company!!)
+        update(userWithDetails.user!!)
+    }
+
+    @Transaction
+    @Delete
+    suspend fun delete(users: List<User>) {
+        users.forEach {
+            delete(it)
+        }
+    }
 }
