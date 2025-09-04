@@ -30,7 +30,9 @@ fun UserListScreen(
                 items(users) { user ->
                     Card(
                         modifier = Modifier.padding(8.dp),
-                        onClick = { /* Handle item click */ }
+                        onClick = {
+                            userViewModel.insertUsersWithDetails(user)
+                        }
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp)

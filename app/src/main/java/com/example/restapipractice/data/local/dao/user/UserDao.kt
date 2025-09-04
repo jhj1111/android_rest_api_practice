@@ -13,7 +13,6 @@ import com.example.restapipractice.data.local.entry.User.Company
 import com.example.restapipractice.data.local.entry.User.Geo
 import com.example.restapipractice.data.local.entry.User.User
 import com.example.restapipractice.data.local.entry.User.UserWithDetails
-import com.example.restapipractice.data.local.entry.User.UserWithDetailsDTO
 
 @Dao
 interface UserDao {
@@ -61,7 +60,12 @@ interface UserDao {
     suspend fun insert(userWithDetails: UserWithDetails): Long {
         val userId = insert(userWithDetails.user)
         val addressId = insert(userWithDetails.address!!)
-//        insert(userWithDetails.address.geo!!)
+        val geo = Geo(
+            addressId = addressId.toInt(),
+            lat = userWithDetails.geo?.lat,
+            lng = userWithDetails.geo?.lng
+        )
+        insert(geo)
         insert(userWithDetails.company!!)
         return userId
     }
