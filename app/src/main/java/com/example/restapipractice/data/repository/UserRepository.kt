@@ -1,6 +1,6 @@
 package com.example.restapipractice.data.repository
 
-import com.example.restapipractice.data.local.entry.User
+import com.example.restapipractice.data.local.entry.User.User
 import com.example.restapipractice.data.remote.RetrofitClient
 
 class UserRepository {

@@ -12,14 +12,18 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.restapipractice.data.local.entry.User
+import com.example.restapipractice.data.local.entry.User.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserListScreen(
-    users: List<User>,
+//    users: List<User>,
+    userViewModel: UserViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val users = userViewModel.userList
+    println("users = $users")
+
     Scaffold(
         topBar = { TopAppBar(title = { Text("User List") }) },
         content = { innerPadding ->
