@@ -26,5 +26,8 @@ interface ArticleApi {
         @Header("X-Naver-Client-Id") clientId: String,   // X-Naver-Client-Id
         @Header("X-Naver-Client-Secret") clientSecret: String,     // tWkcbkE4mY
         @Query("query") query: String,
+        @Query("display") display: Int = 10,
+        @Query("start") start: Int = 1,
+        @Query("sort") sort: String = "sim" // sim: 유사도순, date: 날짜순
     ): ArticleDto
 }

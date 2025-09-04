@@ -1,9 +1,7 @@
 package com.example.restapipractice.data.local.entry.News
 
-import android.content.ClipData
 import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 

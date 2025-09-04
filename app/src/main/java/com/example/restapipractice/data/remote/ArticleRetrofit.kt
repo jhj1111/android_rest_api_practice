@@ -5,14 +5,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ArticleRetrofit {
-    private val retrofit by lazy {
+    private val retrofit =
         Retrofit.Builder()
             .baseUrl("https://openapi.naver.com/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-    }
 
-    val api: ArticleApi by lazy {
+    val api: ArticleApi =
         retrofit.create(ArticleApi::class.java)
-    }
 }
