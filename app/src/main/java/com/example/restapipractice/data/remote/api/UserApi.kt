@@ -37,6 +37,7 @@ data class UserWithDetailsDTO(
     val email: String?,
     val phone: String?,
     val website: String?,
+    val isFavorite: Boolean = false,
 
     // 중첩된 객체들
     val address: AddressDto?,

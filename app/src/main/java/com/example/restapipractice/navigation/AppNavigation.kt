@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.restapipractice.ARTICLE_LIST_ROUTE
 import com.example.restapipractice.USER_LIST_ROUTE
 import com.example.restapipractice.USER_SAVED_ROUTE
+import com.example.restapipractice.data.local.entry.User.User
 import com.example.restapipractice.ui.news.ArticleListScreen
 import com.example.restapipractice.ui.news.ArticleViewModel
 import com.example.restapipractice.ui.user.UserListScreen
@@ -31,7 +32,11 @@ fun AppNavigation(
             UserListScreen(
                 userViewModel = userViewModel,
                 onUserClick = { userWithDetails ->
-                    userViewModel.insertUsersWithDetails(userWithDetails)
+                    val user = userWithDetails.copy(isFavorite = true)
+                    println("user = $user")
+                    userViewModel.updateUser(user.id, true)
+//                    userViewModel.updateUser(newUser)
+//                    userViewModel.insertUserWithDetails(userWithDetails)
                 },
 //                users = userViewModel.userList,
             )
@@ -41,7 +46,7 @@ fun AppNavigation(
             UserSavedScreen(
                 userViewModel = userViewModel,
                 onUserClick = { userWithDetails ->
-                    userViewModel.insertUsersWithDetails(userWithDetails)
+                    userViewModel.insertUserWithDetails(userWithDetails)
                 },
             )
         }

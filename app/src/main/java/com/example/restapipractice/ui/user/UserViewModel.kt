@@ -98,6 +98,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                     email = it.user.email,
                     phone = it.user.phone,
                     website = it.user.website,
+                    isFavorite = it.user.isFavorite,
                     address = AddressDto(
                         street = it.address?.street,
                         suite = it.address?.suite,
@@ -129,14 +130,15 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         return MutableStateFlow(emptyList())
     }
 
-    fun insertUsersWithDetails(usersWithDetailDTO: UserWithDetailsDTO, doFetch: Boolean = false) {
+    fun insertUserWithDetails(usersWithDetailDTO: UserWithDetailsDTO, doFetch: Boolean = false) {
         val user = User(
             id = usersWithDetailDTO.id,
             name = usersWithDetailDTO.name,
             username = usersWithDetailDTO.username,
             email = usersWithDetailDTO.email,
             phone = usersWithDetailDTO.phone,
-            website = usersWithDetailDTO.website
+            website = usersWithDetailDTO.website,
+            isFavorite = usersWithDetailDTO.isFavorite,
         )
         val addressDTO = usersWithDetailDTO.address
         val companyDTO = usersWithDetailDTO.company
@@ -185,22 +187,11 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun insertUsersWithDetails(usersWithDetails: List<UserWithDetails>) {
+    fun insertUsersWithDetails(usersWithDetailDTO: List<UserWithDetailsDTO>) {
         viewModelScope.launch {
             try {
-                usersWithDetails.forEach {
-//                    val geo = if (it.address != null) Geo(
-//                        addressId = it.address.id,
-//                        lat = it.address.geo?.lat,
-//                        lng = it.address.geo?.lng
-//                    )
-                    val userWithDetails = UserWithDetails(
-                        user = it.user,
-                        address = it.address,
-                        company = it.company,
-//                        geo = it.geo
-                    )
-                    _userDao.insert(userWithDetails)
+                usersWithDetailDTO.forEach {
+                    insertUserWithDetails(it)
                 }
                 fetchUsers()
             } catch (e: Exception) {
@@ -209,11 +200,58 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+//    fun insertUsersWithDetails(usersWithDetails: List<UserWithDetails>) {
+//        viewModelScope.launch {
+//            try {
+//                usersWithDetails.forEach {
+////                    val geo = if (it.address != null) Geo(
+////                        addressId = it.address.id,
+////                        lat = it.address.geo?.lat,
+////                        lng = it.address.geo?.lng
+////                    )
+//                    val userWithDetails = UserWithDetails(
+//                        user = it.user,
+//                        address = it.address,
+//                        company = it.company,
+////                        geo = it.geo
+//                    )
+//                    _userDao.insert(userWithDetails)
+//                }
+//                fetchUsers()
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//    }
+
     fun insertUser(user: User) {
         viewModelScope.launch {
             try {
                 _userDao.insert(user)
                 fetchUsers()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun updateUser(userId: Int, isFavorite: Boolean, doFetch: Boolean = false) {
+        viewModelScope.launch {
+            try {
+                _userDao.update(userId, isFavorite)
+                if (doFetch) fetchUsers()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun updateUser(user: List<UserWithDetailsDTO>) {
+        viewModelScope.launch {
+            try {
+                user.forEach {
+                    updateUser(it.id, it.isFavorite)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }

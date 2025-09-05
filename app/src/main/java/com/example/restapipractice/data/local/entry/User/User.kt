@@ -1,5 +1,6 @@
 package com.example.restapipractice.data.local.entry.User
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -14,6 +15,7 @@ data class User(
     val email: String?,
     val phone: String?,
     val website: String?,
+    val isFavorite: Boolean = false,
 )
 
 

@@ -28,12 +28,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.restapipractice.data.remote.api.UserWithDetailsDTO
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlin.io.println
 
 // UserViewModel에서 UI 상태를 나타내는 클래스/Sealed Interface를 사용하는 것이 좋습니다.
 // 예: data class UserListUiState(val isLoading: Boolean = false, val users: List<User> = emptyList(), val error: String? = null)
@@ -44,9 +51,23 @@ fun UserListScreen(
     userViewModel: UserViewModel,
     onUserClick: (UserWithDetailsDTO) -> Unit // 클릭 시 상세 화면 이동 또는 다른 액션 처리용 콜백
 ) {
-    // ViewModel의 userList가 LiveData<List<User>>라고 가정합니다.
-    // 실제로는 ViewModel에서 API 호출 상태(로딩, 성공, 실패)를 포함하는 StateFlow/LiveData를 노출하는 것이 좋습니다.
-    val usersState = userViewModel.userList// userList가 LiveData라고 가정
+//    var usersState: StateFlow<List<UserWithDetailsDTO>>
+    val scope = rememberCoroutineScope()
+    // ViewModel에서 StateFlow<List<UserWithDetails>>를 받아오는 것을 권장
+    val users = remember { mutableStateListOf<UserWithDetailsDTO>() }
+    LaunchedEffect(Unit) {
+        scope.launch {
+            userViewModel.getUsersWithDetailDTO().collect {
+                users.clear()
+                users.addAll(it)
+                if (users.isEmpty()) {
+                    val usersState = userViewModel.userList
+                    userViewModel.insertUsersWithDetails(usersState.toList())
+                }
+            }
+        }
+    }
+
 //    val isLoading by userViewModel.isLoading.observeAsState(initial = false) // isLoading LiveData가 있다고 가정
 
     Scaffold(
@@ -65,9 +86,9 @@ fun UserListScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-//            if (usersState.isEmpty()) {
+//            if (users.isEmpty()) {
 //                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            if (usersState.isEmpty()) {
+            if (users.isEmpty()) {
                 Text(
                     text = "No users found.",
                     modifier = Modifier.align(Alignment.Center),
@@ -79,7 +100,7 @@ fun UserListScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(
-                        items = usersState,
+                        items = users,
                         key = { user -> user.id } // API 응답 User 객체에 id가 있다고 가정
                     ) { user ->
                         UserItem(user = user, onClick = {

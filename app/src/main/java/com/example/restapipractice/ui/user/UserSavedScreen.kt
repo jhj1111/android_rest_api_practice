@@ -57,9 +57,13 @@ fun UserSavedScreen(
     val usersState = remember { mutableStateListOf<UserWithDetailsDTO>() }
     LaunchedEffect(Unit) {
         scope.launch {
-            userViewModel.getUsersWithDetailDTO().collect {
-                usersState.clear()
-                usersState.addAll(it)
+//            usersState.clear()
+            userViewModel.getUsersWithDetailDTO().collect { it ->
+                it.forEach {
+                    println("it = $it")
+                    if (it.isFavorite) usersState.add(it)
+                }
+                println("usersState = ${usersState.toList()}")
             }
         }
     }
@@ -107,7 +111,8 @@ fun UserSavedScreen(
                                 scope.launch {
                                     // UserWithDetails 객체 전체를 넘기거나, user.id만 넘겨서 ViewModel에서 처리하도록 변경
                                     // 여기서는 user.id를 넘겨서 ViewModel에서 관련된 모든 데이터를 삭제하도록 하는 것을 권장
-                                    userViewModel.deleteUser(userWithDetails)
+//                                    userWithDetails.isFavorite = false
+                                    userViewModel.updateUser(userWithDetails.id, false)
                                     usersState.remove(userWithDetails)
                                 }
                             }
