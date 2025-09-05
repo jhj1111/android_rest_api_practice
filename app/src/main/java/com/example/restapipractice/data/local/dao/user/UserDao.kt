@@ -13,8 +13,6 @@ import com.example.restapipractice.data.local.entry.User.Company
 import com.example.restapipractice.data.local.entry.User.Geo
 import com.example.restapipractice.data.local.entry.User.User
 import com.example.restapipractice.data.local.entry.User.UserWithDetails
-import com.example.restapipractice.data.remote.api.AddressDto
-import com.example.restapipractice.data.remote.api.UserWithDetailsDTO
 
 @Dao
 interface UserDao {

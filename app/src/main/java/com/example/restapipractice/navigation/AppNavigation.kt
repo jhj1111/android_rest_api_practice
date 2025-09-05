@@ -30,6 +30,9 @@ fun AppNavigation(
             val users = userViewModel.userList
             UserListScreen(
                 userViewModel = userViewModel,
+                onUserClick = { userWithDetails ->
+                    userViewModel.insertUsersWithDetails(userWithDetails)
+                },
 //                users = userViewModel.userList,
             )
         }
@@ -37,6 +40,9 @@ fun AppNavigation(
         composable(route = USER_SAVED_ROUTE) {
             UserSavedScreen(
                 userViewModel = userViewModel,
+                onUserClick = { userWithDetails ->
+                    userViewModel.insertUsersWithDetails(userWithDetails)
+                },
             )
         }
 

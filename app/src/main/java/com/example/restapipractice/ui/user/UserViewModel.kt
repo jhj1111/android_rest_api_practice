@@ -2,7 +2,6 @@ package com.example.restapipractice.ui.user
 
 import android.app.Application
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restapipractice.data.local.AppDatabase
@@ -38,7 +37,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    suspend fun getUsersWithDetail(): List<UserWithDetails> {
+    suspend fun getUsersWithDetail(): StateFlow<List<UserWithDetails>> {
         try {
             val users = _userDao.getAllUsersWithDetails()
 //            val userList = mutableListOf<UserWithDetails>()
@@ -71,13 +70,17 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 //            }
 //                userList.clear()
 //                userList.addAll(userList)
-            return users
+            val stateFlow = MutableStateFlow(users)
+            stateFlow.value = users
+            return stateFlow
+//            return users
         } catch (e: Exception) {
             e.printStackTrace()
         }
 //        viewModelScope.launch {
 //        }
-        return emptyList()
+        return MutableStateFlow(emptyList())
+//        return emptyList()
     }
 
     suspend fun getUsersWithDetailDTO(): StateFlow<List<UserWithDetailsDTO>> {
@@ -118,6 +121,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 //            println("userList = $userList")
             val stateFlow = MutableStateFlow(userList)
             stateFlow.value = userList
+            println("userList = $userList")
             return stateFlow
         } catch (e: Exception) {
             e.printStackTrace()
@@ -230,10 +234,21 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     suspend fun deleteUser(user: UserWithDetailsDTO, doFetch: Boolean = false) {
         viewModelScope.launch {
             try {
-                val user = getUsersWithDetail().find { it.user.id == user.id }
+                val user = getUsersWithDetail().value.find { it.user.id == user.id }
                 if (user != null) {
                     _userDao.delete(user.user)
                 }
+                if (doFetch) fetchUsers()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun deleteUser(user: UserWithDetails, doFetch: Boolean = false) {
+        viewModelScope.launch {
+            try {
+                _userDao.delete(user.user)
                 if (doFetch) fetchUsers()
             } catch (e: Exception) {
                 e.printStackTrace()
