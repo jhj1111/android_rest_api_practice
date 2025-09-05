@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -31,6 +32,7 @@ data class BottomNavigationItem(
 )
 
 const val USER_LIST_ROUTE = "user_list"
+const val USER_SAVED_ROUTE = "user_saved"
 const val ARTICLE_LIST_ROUTE = "article_list"
 
 class MainActivity : ComponentActivity() {
@@ -54,6 +56,11 @@ fun MainScreen(
             label = "User",
             icon = Icons.Filled.Person,
             route = USER_LIST_ROUTE
+        ),
+        BottomNavigationItem(
+            label = "User Saved",
+            icon = Icons.Filled.Menu,
+            route = USER_SAVED_ROUTE
         ),
         BottomNavigationItem(
             label = "Article",

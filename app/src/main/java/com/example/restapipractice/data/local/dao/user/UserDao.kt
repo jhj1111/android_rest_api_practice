@@ -13,6 +13,8 @@ import com.example.restapipractice.data.local.entry.User.Company
 import com.example.restapipractice.data.local.entry.User.Geo
 import com.example.restapipractice.data.local.entry.User.User
 import com.example.restapipractice.data.local.entry.User.UserWithDetails
+import com.example.restapipractice.data.remote.api.AddressDto
+import com.example.restapipractice.data.remote.api.UserWithDetailsDTO
 
 @Dao
 interface UserDao {
@@ -48,26 +50,39 @@ interface UserDao {
     suspend fun delete(user: User)
 
     @Transaction
+    @Query("SELECT * FROM users")
+    suspend fun getAllUsersWithDetails(): List<UserWithDetails>
+
+    @Transaction
     @Query("SELECT * FROM users WHERE id = :userId")
     suspend fun getUserWithDetails(userId: Int): UserWithDetails
 
     @Transaction
-    @Query("SELECT * FROM addresses WHERE id = :addressId")
-    suspend fun getAddressWithGeo(addressId: Int): AddressWithGeo
+    @Query("""
+        SELECT * FROM addresses
+        INNER JOIN users ON users.id = addresses.userId
+        INNER JOIN geo ON addresses.id = geo.addressId
+        WHERE users.id = :userId
+    """)
+    suspend fun getUserAddressWithGeo(userId: Int): AddressWithGeo?
+
+    @Transaction
+    @Query("SELECT * FROM addresses")
+    suspend fun getAddressWithGeo(): AddressWithGeo?
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun insert(userWithDetails: UserWithDetails): Long {
+    suspend fun insert(userWithDetails: UserWithDetails): Pair<Long, Long> {
         val userId = insert(userWithDetails.user)
         val addressId = insert(userWithDetails.address!!)
-        val geo = Geo(
-            addressId = addressId.toInt(),
-            lat = userWithDetails.geo?.lat,
-            lng = userWithDetails.geo?.lng
-        )
-        insert(geo)
+//        val geo = Geo(
+//            addressId = addressId.toInt(),
+//            lat = userWithDetails.geo?.lat,
+//            lng = userWithDetails.geo?.lng
+//        )
+//        insert(geo)
         insert(userWithDetails.company!!)
-        return userId
+        return Pair(userId, addressId)
     }
 
     @Transaction
@@ -91,7 +106,7 @@ interface UserDao {
     suspend fun update(userWithDetails: UserWithDetails) {
         update(userWithDetails.address!!)
         update(userWithDetails.company!!)
-        update(userWithDetails.user!!)
+        update(userWithDetails.user)
     }
 
     @Transaction
